@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <p>Главная страница</p>
+    <p>О компании</p>
   </b-container>
 </template>
 
