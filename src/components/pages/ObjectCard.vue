@@ -1,94 +1,116 @@
 <template>
   <main>
-    <b-jumbotron :fluid="true" header="Бизнес-центр Профсоюзная 125 стр. 1"/>
+    <b-jumbotron :fluid="true" :header="object.name"/>
     <b-container>
       <b-row class="mb-5">
         <b-col cols="7">
           <h2>Описание</h2>
-          <p>Аренда офисов класса A в бизнес-центре Газфилд (без комиссии), обновления по свободным площадям. Индивидуальный подход к арендаторам офисов.</p>
-          <p>Бизнес-центр «Газфилд» — объект недвижимости премиум-класса, который находится в зоне высокой деловой активности — ЮЗАО. По соседству расположилась штаб-квартира «Газпрома». Аренда офиса предлагается в грандиозном комплексе, состоящем из несколько совмещенных разноэтажных корпусов.</p>
+          <p>{{ object.short_description }}</p>
+          <p class="mb-5">{{ object.full_description }}</p>
 
           <h2>Характеристики</h2>
           <b-row class="mb-5">
-            <b-col cols="5" tag="dt">Характеристики</b-col>
-            <b-col cols="7" tag="dd">Характеристики</b-col>
+            <template v-for="feature in object.features">
+              <b-col cols="5" tag="dt">{{ feature.name }}</b-col>
+              <b-col cols="7" tag="dd">{{ feature.value }}</b-col>
+            </template>
           </b-row>
 
           <h2>Расположение</h2>
           <b-row class="mb-5">
-            <b-col cols="5" tag="dt">Регион</b-col>
-            <b-col cols="7" tag="dd">Регион</b-col>
+            <template v-if="object.city">
+              <b-col cols="5" tag="dt">Населенный пункт</b-col>
+              <b-col cols="7" tag="dd">{{ object.city.name }}</b-col>
+            </template>
 
-            <b-col cols="5" tag="dt">Район</b-col>
-            <b-col cols="7" tag="dd">Район</b-col>
-
-            <b-col cols="5" tag="dt">Населенный пункт</b-col>
-            <b-col cols="7" tag="dd">Населенный пункт</b-col>
-
-            <b-col cols="5" tag="dt">Микрорайон</b-col>
-            <b-col cols="7" tag="dd">Микрорайон</b-col>
+            <template v-if="object.address">
+              <b-col cols="5" tag="dt">Адрес</b-col>
+              <b-col cols="7" tag="dd">{{ object.address }}</b-col>
+            </template>
           </b-row>
         </b-col>
         <b-col cols="5">
           <yandex-map
             style="height: 400px;"
-            :coords="[54.62896654088406, 39.731893822753904]">
+            :coords="coords"
+            v-if="coords.length">
             <ymap-marker
               marker-type="placemark"
               marker-id="1"
-              :coords="[54.62896654088406, 39.731893822753904]"/>
+              :coords="coords"/>
           </yandex-map>
         </b-col>
       </b-row>
 
-      <h2>Помещения</h2>
-      <b-table striped hover v-bind="premises">
-        <template slot="totalCostPerMonth" slot-scope="data">
-          {{ data.item.area * data.item.costPerMonth }}
-        </template>
-        <template slot="table-caption">
-          <b-row class="mb-5">
-            <b-col cols="3" tag="dt">Общая площадь</b-col>
-            <b-col cols="9" tag="dd">{{ totalArea }} м²</b-col>
+      <template v-if="object.rooms.length">
+        <h2>Помещения</h2>
+        <b-table striped hover v-bind="premises">
+          <template slot="totalCostPerMonth" slot-scope="data">
+            {{ data.item.area * data.item.cost_month_meter }}
+          </template>
+          <template slot="table-caption">
+            <b-row class="mb-5">
+              <b-col cols="3" tag="dt">Общая площадь</b-col>
+              <b-col cols="9" tag="dd">{{ totalArea }} м²</b-col>
 
-            <b-col cols="3" tag="dt">Общая стоимость, в мес.</b-col>
-            <b-col cols="9" tag="dd">{{ totalObjectCost }} ₽</b-col>
-          </b-row>
-        </template>
-      </b-table>
+              <b-col cols="3" tag="dt">Общая стоимость, в мес.</b-col>
+              <b-col cols="9" tag="dd">{{ totalObjectCost }} ₽</b-col>
+            </b-row>
+          </template>
+        </b-table>
+      </template>
     </b-container>
   </main>
 </template>
 
 <script>
+import request from '../../helpers/request';
+import getPosition from '../../helpers/getPosition';
+
 export default {
   data() {
     return {
-      premises: {
-        fields: [
-          { key: 'area', label: 'Площадь, м²', sortable: true },
-          { key: 'floor', label: 'Этаж', sortable: true },
-          { key: 'costPerMonth', label: 'В мес., ₽/м²', sortable: true },
-          { key: 'totalCostPerMonth', label: 'Всего в мес., ₽', sortable: true }
-        ],
-        items: [
-          { area: 125, floor: 2, costPerMonth: 344 },
-          { area: 344, floor: 1, costPerMonth: 1234 },
-          { area: 56, floor: 3, costPerMonth: 233 }
-        ]
-      }
+      object: {},
+      coords: []
     };
   },
   computed: {
     totalArea() {
-      return this.premises.items.reduce((sum, current) => (sum + current.area), 0);
+      if (this.premises.items) {
+        return this.premises.items.reduce((sum, current) => (sum + current.area), 0);
+      } else {
+        return 0;
+      }
     },
     totalObjectCost() {
-      return this.premises.items.reduce((sum, current) => (sum + current.area * current.costPerMonth), 0);
+      if (this.premises.items) {
+        return this.premises.items.reduce((sum, current) => (sum + current.area * current.cost_month_meter), 0);
+      } else {
+        return 0;
+      }
+    },
+    premises() {
+      return {
+        fields: [
+          { key: 'area', label: 'Площадь, м²', sortable: true },
+          { key: 'floor', label: 'Этаж', sortable: true },
+          { key: 'cost_month_meter', label: 'В мес., ₽/м²', sortable: true },
+          { key: 'totalCostPerMonth', label: 'Всего в мес., ₽', sortable: true }
+        ],
+        items: this.object.rooms
+      };
     }
+  },
+  created() {
+    request.get(`/object-card/${this.$route.params.id}`)
+      .then((response) => {
+        this.object = response.data;
+
+        getPosition(`${this.object.city.name} ${this.object.address}`, (coords) => {
+          this.coords = coords;
+        });
+      })
+      .catch(error => console.log(error));
   }
 };
 </script>
-
-<style lang="scss" scoped>
-</style>
