@@ -1,25 +1,33 @@
 <template>
-  <b-container>
-    <h1 class="display-3 mt-3 mb-4">Каталог</h1>
-    <b-row>
-      <template v-for="rowIndex in 3">
-        <b-col v-for="colIndex in 3" :key="`catalog-${rowIndex}${colIndex}`" class="mb-4">
-          <b-card title="Card Title"
-                  img-src="https://lorempixel.com/600/300/food/5/"
-                  img-alt="Image"
-                  img-top
-                  tag="article"
-                  class="box-shadow">
+  <main>
+    <b-jumbotron :fluid="true" header="Каталог"/>
+    <b-container>
+      <b-row>
+        <b-col v-for="index in 12" :key="`catalog-${index}`" cols="4" class="mb-4">
+          <b-card title="Бизнес-центр Профсоюзная 125 стр. 1"
+                  tag="article">
+            <yandex-map
+              style="height: 140px;"
+              class="mb-3"
+              :behaviors="[]"
+              :controls="[]"
+              :coords="[54.62896654088406, 39.731893822753904]">
+              <ymap-marker
+                marker-type="placemark"
+                marker-id="1"
+                :coords="[54.62896654088406, 39.731893822753904]"/>
+            </yandex-map>
             <p class="card-text">
-              Some quick example text to build on the card title and make up the bulk of the card's content.
+              Огороженная территория, охрана, видеонаблюдение, шлагбаум
             </p>
-            <b-button href="#" variant="primary">Go somewhere</b-button>
+            <p>
+              <b-btn variant="secondary" to="/object-card/1">Подробнее »</b-btn>
+            </p>
           </b-card>
         </b-col>
-        <div class="w-100"></div>
-      </template>
-    </b-row>
-  </b-container>
+      </b-row>
+    </b-container>
+  </main>
 </template>
 
 <script>

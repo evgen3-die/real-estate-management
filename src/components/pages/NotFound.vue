@@ -1,7 +1,7 @@
 <template>
-  <b-container>
-    <p>404</p>
-  </b-container>
+  <main>
+    <b-jumbotron :fluid="true" header="404"/>
+  </main>
 </template>
 
 <script>
