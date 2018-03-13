@@ -1,6 +1,6 @@
 <template>
   <main>
-    <b-jumbotron :fluid="true" header="Добавить пользователя"/>
+    <b-jumbotron :fluid="true" header="Вход"/>
     <b-container>
       <b-form @submit.prevent="onSubmit">
         <b-form-group label="Логин:">
@@ -34,10 +34,10 @@ export default {
   },
   methods: {
     onSubmit() {
-      request.post('/register', {
+      request.post('/login', {
         login: this.user.login,
         password: this.user.password
-      });
+      }).then(() => this.$router.push('/admin'));
     }
   }
 };

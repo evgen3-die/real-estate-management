@@ -2,7 +2,7 @@
   <main>
     <b-jumbotron :fluid="true" :header="object.name"/>
     <b-container>
-      <b-row class="mb-5">
+      <b-row>
         <b-col cols="7">
           <h2>Описание</h2>
           <p>{{ object.short_description }}</p>

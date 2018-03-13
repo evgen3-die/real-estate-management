@@ -1,4 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define('user', {
+    login: DataTypes.STRING,
+    password: DataTypes.STRING
+  });
+
   const Region = sequelize.define('region', {
     name: DataTypes.STRING
   });
@@ -52,5 +57,5 @@ module.exports = (sequelize, DataTypes) => {
   Room.belongsTo(Object);
   Feature.belongsTo(Object);
 
-  return { Region, City, Object, Feature, Room };
+  return { Region, City, Object, Feature, Room, User };
 };
