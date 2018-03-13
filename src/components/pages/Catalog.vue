@@ -2,8 +2,9 @@
   <main>
     <b-jumbotron :fluid="true" header="Каталог"/>
     <b-container>
-      <b-row>
-        <b-col v-for="object in objects" :key="object.id" cols="4" class="mb-4">
+      <b-form-input type="text" v-model="query" placeholder="Поиск" required/>
+      <b-row class="mt-5">
+        <b-col v-for="object in filteredObjects" :key="object.id" cols="4" class="mb-4">
           <b-card :title="object.name" tag="article">
             <button type="button" class="close" aria-label="Close" v-if="login" @click.prevent="remove(object.id)">
               <span aria-hidden="true">&times;</span>
@@ -43,12 +44,18 @@ export default {
     return {
       objects: [],
       coords: {},
-      login: false
+      login: false,
+      query: ''
     }
   },
   created() {
     this.updateList();
     request.get('/check-login').then(response => (this.login = response.data));
+  },
+  computed: {
+    filteredObjects() {
+      return this.objects.filter(object => object.name.toLowerCase().includes(this.query.toLowerCase()));
+    }
   },
   methods: {
     updateCoords() {
