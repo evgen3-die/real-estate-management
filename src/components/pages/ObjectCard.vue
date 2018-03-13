@@ -8,16 +8,23 @@
           <p>{{ object.short_description }}</p>
           <p class="mb-5">{{ object.full_description }}</p>
 
-          <h2>Характеристики</h2>
-          <b-row class="mb-5">
-            <template v-for="feature in object.features">
-              <b-col cols="5" tag="dt">{{ feature.name }}</b-col>
-              <b-col cols="7" tag="dd">{{ feature.value }}</b-col>
-            </template>
-          </b-row>
+          <template v-if="object.features && object.features.length">
+            <h2>Характеристики</h2>
+            <b-row class="mb-5">
+              <template v-for="feature in object.features">
+                <b-col cols="5" tag="dt">{{ feature.name }}</b-col>
+                <b-col cols="7" tag="dd">{{ feature.value }}</b-col>
+              </template>
+            </b-row>
+          </template>
 
           <h2>Расположение</h2>
           <b-row class="mb-5">
+            <template v-if="object.city && object.city.region">
+              <b-col cols="5" tag="dt">Регион</b-col>
+              <b-col cols="7" tag="dd">{{ object.city.region.name }}</b-col>
+            </template>
+
             <template v-if="object.city">
               <b-col cols="5" tag="dt">Населенный пункт</b-col>
               <b-col cols="7" tag="dd">{{ object.city.name }}</b-col>
@@ -42,7 +49,7 @@
         </b-col>
       </b-row>
 
-      <template v-if="object.rooms.length">
+      <template v-if="object.rooms && object.rooms.length">
         <h2>Помещения</h2>
         <b-table striped hover v-bind="premises">
           <template slot="totalCostPerMonth" slot-scope="data">

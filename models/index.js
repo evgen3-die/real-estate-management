@@ -46,6 +46,8 @@ module.exports = (sequelize, DataTypes) => {
   Object.belongsTo(City);
 
   City.hasMany(Object);
+  City.belongsTo(Region);
+
   Region.hasMany(City);
   Room.belongsTo(Object);
   Feature.belongsTo(Object);

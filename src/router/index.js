@@ -6,6 +6,8 @@ import Catalog from '../components/pages/Catalog';
 import About from '../components/pages/About';
 import Contacts from '../components/pages/Contacts';
 import ObjectCard from '../components/pages/ObjectCard';
+import Admin from '../components/pages/Admin';
+import AddObject from '../components/pages/AddObject';
 
 Vue.use(Router);
 
@@ -16,6 +18,8 @@ export default new Router({
     { path: '/catalog', component: Catalog },
     { path: '/about', component: About },
     { path: '/contacts', component: Contacts },
+    { path: '/admin', component: Admin },
+    { path: '/admin/add-object', component: AddObject },
     { path: '/object-card/:id', component: ObjectCard },
     { path: '*', redirect: '/404' }
   ]
