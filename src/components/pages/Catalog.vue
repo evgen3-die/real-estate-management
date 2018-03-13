@@ -4,8 +4,10 @@
     <b-container>
       <b-row>
         <b-col v-for="object in objects" :key="object.id" cols="4" class="mb-4">
-          <b-card :title="object.name"
-                  tag="article">
+          <b-card :title="object.name" tag="article">
+            <button type="button" class="close" aria-label="Close" v-if="login" @click.prevent="remove(object.id)">
+              <span aria-hidden="true">&times;</span>
+            </button>
             <yandex-map
               style="height: 140px;"
               class="mb-3"
@@ -40,16 +42,13 @@ export default {
   data() {
     return {
       objects: [],
-      coords: {}
+      coords: {},
+      login: false
     }
   },
   created() {
-    request.get('/object-cards')
-      .then((response) => {
-        this.objects = response.data;
-        this.updateCoords();
-      })
-      .catch(error => console.log(error));
+    this.updateList();
+    request.get('/check-login').then(response => (this.login = response.data));
   },
   methods: {
     updateCoords() {
@@ -61,7 +60,30 @@ export default {
       getPosition(query, (coords) => {
         this.$set(this.coords, objectId, coords);
       });
+    },
+    remove(id) {
+      request.delete(`/object-card/${id}`).then(() => this.updateList());
+    },
+    updateList() {
+      request.get('/object-cards')
+        .then((response) => {
+          this.objects = response.data;
+          this.updateCoords();
+        })
+        .catch(error => console.log(error));
     }
   }
 };
 </script>
+
+<style scoped>
+.close {
+  position: absolute;
+  top: 10px;
+  right: 17px;
+}
+
+.card {
+  position: relative;
+}
+</style>

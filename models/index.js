@@ -25,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
     full_description: DataTypes.TEXT,
     date_add: DataTypes.DATE,
     address: DataTypes.STRING,
-    city_id: DataTypes.STRING
+    city_id: DataTypes.INTEGER,
+    user_id: DataTypes.INTEGER
   });
 
   const Feature = sequelize.define('feature', {

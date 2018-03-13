@@ -58,6 +58,20 @@ app.get('/api/object-card/:id', (req, res) => {
   });
 });
 
+app.delete('/api/object-card/:id', (req, res) => {
+  if (req.isAuthenticated()) {
+    models.Object.destroy({
+      where: { id: req.params.id },
+      include: [
+        models.Feature,
+        models.Room
+      ]
+    }).then((status) => {
+      res.sendStatus(status ? 200 : 500);
+    });
+  }
+});
+
 app.post('/api/object-card/', (req, res) => {
   if (req.isAuthenticated()) {
     models.Object.create({
@@ -66,6 +80,7 @@ app.post('/api/object-card/', (req, res) => {
       full_description: req.body.full_description,
       address: req.body.address,
       city_id: req.body.city_id,
+      user_id: req.user.id,
       Feature: req.body.features,
       Room: req.body.rooms
     }, { include: [models.Feature, models.Room] })
